@@ -1,0 +1,449 @@
+# Interview Ready Tic Tac Toe Project
+
+Save this as `index.html` and run it in your browser.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Tic Tac Toe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#141e30,#243b55);
+    overflow:hidden;
+}
+
+.background-circle{
+    pointer-events:none;
+    position:absolute;
+    border-radius:50%;
+    filter:blur(100px);
+    opacity:0.4;
+    pointer-events:none;
+}
+
+.circle1{
+    width:300px;
+    height:300px;
+    background:#ff00cc;
+    top:-50px;
+    left:-50px;
+}
+
+.circle2{
+    width:300px;
+    height:300px;
+    background:#00f2ff;
+    bottom:-50px;
+    right:-50px;
+}
+
+.container{
+    width:95%;
+    max-width:1200px;
+    padding:40px;
+    border-radius:30px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    box-shadow:0 0 25px rgba(255,255,255,0.15);
+    text-align:center;
+    position:relative;
+    z-index:1;
+}
+
+h1{
+    color:white;
+    margin-bottom:20px;
+    font-size:60px;
+    text-shadow:0 0 15px #00f2ff;
+}
+
+.mode-buttons{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.mode-buttons button{
+    padding:10px 15px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    background:linear-gradient(45deg,#ff00cc,#3333ff);
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.mode-buttons button:hover{
+    transform:scale(1.08);
+}
+
+.scoreboard{
+    gap:20px;
+    display:flex;
+    justify-content:space-between;
+    margin:20px 0;
+    color:white;
+    font-size:24px;
+}
+
+.score-box{
+    flex:1;
+    margin:0 5px;
+    padding:12px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.1);
+}
+
+#status{
+    color:white;
+    font-size:32px;
+    margin-bottom:20px;
+    font-weight:500;
+}
+
+.board{
+    display:grid;
+    grid-template-columns:repeat(3,160px);
+    gap:12px;
+    justify-content:center;
+}
+
+.cell{
+    width:160px;
+    height:160px;
+    background:rgba(255,255,255,0.12);
+    border-radius:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:75px;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 10px rgba(255,255,255,0.1);
+}
+
+.cell:hover{
+    transform:scale(1.05);
+    background:rgba(255,255,255,0.2);
+}
+
+.x{
+    color:#00f2ff;
+    text-shadow:0 0 20px #00f2ff;
+}
+
+.o{
+    color:#ff00cc;
+    text-shadow:0 0 20px #ff00cc;
+}
+
+.winner{
+    animation:glow 0.8s infinite alternate;
+}
+
+@keyframes glow{
+    from{
+        box-shadow:0 0 10px white;
+    }
+    to{
+        box-shadow:0 0 25px #00f2ff;
+    }
+}
+
+.controls{
+    margin-top:25px;
+}
+
+.controls button{
+    padding:12px 25px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    background:linear-gradient(45deg,#00c6ff,#0072ff);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.controls button:hover{
+    transform:scale(1.08);
+}
+
+.footer{
+    margin-top:18px;
+    color:#ddd;
+    font-size:14px;
+}
+
+@media(max-width:700px){
+
+    .container{
+        width:95%;
+        padding:20px;
+    }
+
+    .board{
+        grid-template-columns:repeat(3,90px);
+    }
+
+    .cell{
+        width:90px;
+        height:90px;
+        font-size:45px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background-circle circle1"></div>
+<div class="background-circle circle2"></div>
+
+<div class="container">
+
+<h1>✨ Tic Tac Toe ✨</h1>
+
+<div class="mode-buttons">
+    <button onclick="setMode('player')">2 Players</button>
+    <button onclick="setMode('ai')">Play vs AI</button>
+</div>
+
+<div class="scoreboard">
+    <div class="score-box">X Score<br><span id="xScore">0</span></div>
+    <div class="score-box">Draws<br><span id="drawScore">0</span></div>
+    <div class="score-box">O Score<br><span id="oScore">0</span></div>
+</div>
+
+<div id="status">Player X Turn</div>
+
+<div class="board">
+    <div class="cell" onclick="play(this,0)"></div>
+    <div class="cell" onclick="play(this,1)"></div>
+    <div class="cell" onclick="play(this,2)"></div>
+    <div class="cell" onclick="play(this,3)"></div>
+    <div class="cell" onclick="play(this,4)"></div>
+    <div class="cell" onclick="play(this,5)"></div>
+    <div class="cell" onclick="play(this,6)"></div>
+    <div class="cell" onclick="play(this,7)"></div>
+    <div class="cell" onclick="play(this,8)"></div>
+</div>
+
+<div class="controls">
+    <button onclick="restartGame()">🔄 New Game</button>
+</div>
+
+<div class="footer">
+Built using HTML, CSS & JavaScript
+</div>
+
+</div>
+
+<script>
+
+let currentPlayer = 'X';
+let game = ['','','','','','','','',''];
+let gameOver = false;
+let mode = 'player';
+
+let xScore = 0;
+let oScore = 0;
+let drawScore = 0;
+
+const winPatterns = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+];
+
+function setMode(selectedMode){
+
+    mode = selectedMode;
+    restartGame();
+
+    if(mode === 'ai'){
+        document.getElementById('status').innerHTML =
+        'Player X Turn (AI Enabled)';
+    }
+}
+
+function play(cell,index){
+
+    if(game[index] !== '' || gameOver){
+        return;
+    }
+
+    makeMove(cell,index,currentPlayer);
+
+    checkWinner();
+
+    if(!gameOver){
+
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+
+        document.getElementById('status').innerHTML =
+        'Player ' + currentPlayer + ' Turn';
+
+        if(mode === 'ai' && currentPlayer === 'O'){
+            setTimeout(aiMove,500);
+        }
+    }
+}
+
+function makeMove(cell,index,player){
+
+    game[index] = player;
+    cell.innerHTML = player;
+
+    if(player === 'X'){
+        cell.classList.add('x');
+    }
+    else{
+        cell.classList.add('o');
+    }
+}
+
+function aiMove(){
+
+    let emptyCells = [];
+
+    for(let i=0;i<game.length;i++){
+        if(game[i] === ''){
+            emptyCells.push(i);
+        }
+    }
+
+    if(emptyCells.length === 0 || gameOver){
+        return;
+    }
+
+    let randomIndex = emptyCells[Math.floor(Math.random()*emptyCells.length)];
+
+    let cells = document.getElementsByClassName('cell');
+
+    makeMove(cells[randomIndex],randomIndex,'O');
+
+    checkWinner();
+
+    if(!gameOver){
+        currentPlayer = 'X';
+
+        document.getElementById('status').innerHTML =
+        'Player X Turn';
+    }
+}
+
+function checkWinner(){
+
+    let cells = document.getElementsByClassName('cell');
+
+    for(let pattern of winPatterns){
+
+        let a = pattern[0];
+        let b = pattern[1];
+        let c = pattern[2];
+
+        if(game[a] && game[a] === game[b] && game[a] === game[c]){
+
+            cells[a].classList.add('winner');
+            cells[b].classList.add('winner');
+            cells[c].classList.add('winner');
+
+            document.getElementById('status').innerHTML =
+            '🎉 Player ' + game[a] + ' Wins!';
+
+            if(game[a] === 'X'){
+                xScore++;
+                document.getElementById('xScore').innerHTML = xScore;
+            }
+            else{
+                oScore++;
+                document.getElementById('oScore').innerHTML = oScore;
+            }
+
+            gameOver = true;
+            return;
+        }
+    }
+
+    if(!game.includes('')){
+
+        drawScore++;
+        document.getElementById('drawScore').innerHTML = drawScore;
+
+        document.getElementById('status').innerHTML =
+        '😄 Match Draw!';
+
+        gameOver = true;
+    }
+}
+
+function restartGame(){
+
+    game = ['','','','','','','','',''];
+    gameOver = false;
+    currentPlayer = 'X';
+
+    document.getElementById('status').innerHTML =
+    'Player X Turn';
+
+    let cells = document.getElementsByClassName('cell');
+
+    for(let cell of cells){
+        cell.innerHTML = '';
+        cell.classList.remove('x');
+        cell.classList.remove('o');
+        cell.classList.remove('winner');
+    }
+}
+
+</script>
+
+</body>
+</html>
+```
+
+## Features Included
+
+* Beautiful modern UI
+* Responsive design
+* AI opponent
+* Scoreboard
+* Winner animation
+* Hover effects
+* Mobile friendly
+* Restart game option
+* Professional styling
+* Clean code structure
+
+## What To Say In Interview
+
+"I developed this Tic Tac Toe application using HTML, CSS, and JavaScript. I implemented DOM manipulation, responsive UI design, game logic, animations, and an AI-based opponent mode. The project also includes score tracking and interactive visual effects to improve user experience."
